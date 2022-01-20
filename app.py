@@ -1,3 +1,6 @@
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import mm
 import matplotlib.pyplot as plt
 from datetime import datetime
 import pandas as pd
@@ -291,6 +294,79 @@ class Grades(Student):
                 print('| Select "l" for "line graph" | select "s" for "scattered/dot graph" | select "b" for "bar graph" | select "p" for "pie chart" |')
 
                 print('\n')
+
+    # generate report card
+    def generate_report_card(self):
+
+        my_canvas = canvas.Canvas("student_report.pdf")
+
+        height = letter
+
+        top_margin = 830
+
+        left_margin = 72
+
+        report_title = 'Report card for student: ' + self.first_name + ' ' + self.last_name
+
+        score_dict = {
+            'Science' : self.science,
+            'Math' : self.math,
+            'Language' : self.language,
+            'Music' : self.music,
+            'History' : self.history,
+            'Geography' : self.geography,
+            'Art' : self.art
+        }
+
+        x_axis_data = [
+            'Science', 
+            'Math', 
+            'Language', 
+            'Music', 
+            'History', 
+            'Geography', 
+            'Art'
+        ]
+
+        y_axis_data = [
+            self.science,
+            self.math,
+            self.language,
+            self.music,
+            self.history,
+            self.geography,
+            self.art
+        ]
+
+        my_canvas.drawString(left_margin, 800, report_title)
+
+        for score, name in score_dict.items():
+
+            sub_text_1 = str(name)
+
+            sub_text_2 = '..........'
+
+            sub_text_3 = str(score)
+
+            text = sub_text_1 + sub_text_2 + sub_text_3
+
+            my_canvas.drawString(left_margin, top_margin, text)
+
+            top_margin += 20
+
+        plt.bar(x_axis_data, y_axis_data)
+
+        plt.title("Student performance data")
+
+        plt.savefig('my_plot.png')
+
+        image = 'my_plot.png'
+
+        my_canvas.drawImage(image, left_margin, 900)
+
+        my_canvas.showPage()
+
+        my_canvas.save()
     
 # main program
 if __name__ == "__main__":
@@ -618,7 +694,7 @@ if __name__ == "__main__":
 
                     time.sleep(2)
 
-                    print('Generate report card operation shall be called here.')
+                    grading_instance.generate_report_card()
                     
                     print('\n')
 
